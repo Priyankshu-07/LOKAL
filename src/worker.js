@@ -96,10 +96,6 @@ async function generate(messages) {
     output: decoded,
   });
 }
-
-/**
- * Helper function to perform feature detection for WebGPU
- */
 async function check() {
   try {
     const adapter = await navigator.gpu.requestAdapter();
@@ -113,20 +109,12 @@ async function check() {
     });
   }
 }
-
-/**
- * Helper function to load the model and tokenizer
- */
 async function load() {
   self.postMessage({
     status: "loading",
     data: "Loading model...",
   });
-
-  // Load the pipeline and save it for future use.
   const [tokenizer, model] = await TextGenerationPipeline.getInstance((x) => {
-    // We also add a progress callback to the pipeline so that we can
-    // track model loading.
     self.postMessage(x);
   });
 
@@ -134,8 +122,6 @@ async function load() {
     status: "loading",
     data: "Compiling shaders and warming up the model...",
   });
-
-  // Run model with dummy input to compile shaders
   const inputs = tokenizer("a");
   await model.generate({ ...inputs, max_new_tokens: 1 });
   self.postMessage({ status: "ready" });
